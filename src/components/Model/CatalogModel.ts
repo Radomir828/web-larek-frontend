@@ -6,6 +6,7 @@ import { Model } from '../base/Model';
 export interface ICatalog {
 	setCatalog(items: IProduct[]): void;
 	getCatalogItems(): IProduct[];
+	getCatalogItem(id: string): IProduct;
 	setPreview(item: IProduct): void;
 }
 
@@ -22,6 +23,10 @@ export class Catalog extends Model<ICatalog> implements ICatalog {
 
 	getCatalogItems() {
 		return this.catalog;
+	}
+
+	getCatalogItem(id: string): IProduct {
+		return this.catalog.find((item) => item.id === id);
 	}
 
 	setPreview(item: IProduct) {
