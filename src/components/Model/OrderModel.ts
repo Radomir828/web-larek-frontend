@@ -22,31 +22,41 @@ export class Order extends Model<IOrder> {
 		};
 		this.basket.add(basketItem);
 
-		this.emitChanges('basket: changed', { basket: this.basket });
+		this.emitChanges('basket:changed');
 	}
 
-	removeFromBasket(item: IProduct) {
+	removeFromBasket(item: IBasketItem) {
 		const basketItem = Array.from(this.basket).find((b) => b.id === item.id);
 
 		if (basketItem) {
 			this.basket.delete(basketItem);
-			this.emitChanges('basket: changed', { basket: this.getBasket() });
+			this.emitChanges('basket:changed');
 		} else {
 			return;
 		}
-
-		// this.basket.filter((basketItem) => basketItem.id !== item.id);
-		// this.emitChanges('basket: changed', { basket: this.basket });
 	}
 
 	getBasket(): IBasketItem[] {
 		return Array.from(this.basket);
 	}
 
+	getBasketItem(id: string): IBasketItem {
+		return this.getBasket().find((basketElement) => basketElement.id === id);
+	}
+
 	getBasketAmount(): number {
 		return this.getBasket().reduce<number>((total, item) => {
 			return total + (item.price ?? 0);
 		}, 0);
+	}
+
+	isInBasket(item: IProduct): boolean {
+		return this.getBasketItem(item.id) ? true : false;
+		// return this.getBasket().find(
+		// 	(basketElement) => basketElement.id === item.id
+		// )
+		// 	? true
+		// 	: false;
 	}
 
 	setOrderField<K extends keyof IOrder>(field: K, value: IOrder[K]) {

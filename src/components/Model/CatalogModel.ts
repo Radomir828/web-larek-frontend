@@ -18,7 +18,7 @@ export class Catalog extends Model<ICatalog> implements ICatalog {
 	setCatalog(items: IProduct[]) {
 		this.catalog = items;
 		this.total = this.catalog.length;
-		this.emitChanges('catalog: changed', { items: this.catalog });
+		this.emitChanges('catalog:changed');
 	}
 
 	getCatalogItems() {
@@ -31,6 +31,6 @@ export class Catalog extends Model<ICatalog> implements ICatalog {
 
 	setPreview(item: IProduct) {
 		this.preview = item.id;
-		this.emitChanges('preview: changed', { item });
+		this.emitChanges('preview:changed', item);
 	}
 }
