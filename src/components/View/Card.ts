@@ -2,7 +2,6 @@ import { IProduct } from './../../types/index';
 import { categoryColor, ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
-import { CDN_URL } from '../../utils/constants';
 
 export class Card extends Component<IProduct> {
 	protected categoryElement: HTMLElement;
@@ -86,10 +85,6 @@ export class Card extends Component<IProduct> {
 	setButtonInactive(): void {
 		this.cardButton.disabled = true;
 	}
-
-	// set buttonInactive(value: boolean) {
-	// 	this.cardButton.disabled = value;
-	// }
 }
 
 export class CardPreview extends Card {

@@ -1,4 +1,3 @@
-import { IProduct } from './../../types/index';
 import { ensureElement } from '../../utils/utils';
 import { EventEmitter } from '../base/events';
 import { Component } from '../base/Component';
