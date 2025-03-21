@@ -16,7 +16,7 @@ export interface IProduct {
 
 export type IBasketItem = Pick<IProduct, 'id' | 'title' | 'price'>;
 
-export type paymentMethod = 'online' | 'offline';
+export type paymentMethod = 'cash' | 'card' | '';
 
 export interface IOrderForm {
 	payment: paymentMethod;
