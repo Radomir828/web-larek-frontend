@@ -10,7 +10,7 @@ import {
 import { Model } from '../base/Model';
 
 export class Order extends Model<IOrder> {
-	protected basket: Set<IBasketItem> = new Set();
+	protected basket: IBasketItem[] = [];
 	order: Partial<IOrder> = {
 		payment: '',
 		address: '',
@@ -29,32 +29,26 @@ export class Order extends Model<IOrder> {
 			title: item.title,
 			price: item.price,
 		};
-		this.basket.add(basketItem);
+		this.basket.push(basketItem);
 
 		this.emitChanges('basket:changed');
 	}
 
 	removeFromBasket(item: IBasketItem) {
-		const basketItem = Array.from(this.basket).find((b) => b.id === item.id);
-
-		if (basketItem) {
-			this.basket.delete(basketItem);
-			this.emitChanges('basket:changed');
-		} else {
-			return;
-		}
+		this.basket = this.basket.filter((basketItem) => basketItem.id !== item.id);
+		this.emitChanges('basket:changed');
 	}
 
 	clearBasket(): void {
-		this.basket = new Set();
+		this.basket = [];
 	}
 
 	getBasket(): IBasketItem[] {
-		return Array.from(this.basket);
+		return this.basket;
 	}
 
 	getBasketItem(id: string): IBasketItem {
-		return this.getBasket().find((basketElement) => basketElement.id === id);
+		return this.basket.find((basketElement) => basketElement.id === id);
 	}
 
 	getBasketAmount(): number {
@@ -68,7 +62,7 @@ export class Order extends Model<IOrder> {
 	}
 
 	setOrderItems(): string[] {
-		return this.getBasket().map((item) => item.id);
+		return this.basket.map((item) => item.id);
 	}
 
 	setOrderField<K extends keyof IOrderForm>(field: K, value: IOrder[K]) {
