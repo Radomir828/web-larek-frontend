@@ -11,8 +11,17 @@ import { Model } from '../base/Model';
 
 export class Order extends Model<IOrder> {
 	protected basket: Set<IBasketItem> = new Set();
-	protected order: Partial<IOrder> = {};
+	order: Partial<IOrder> = {
+		payment: '',
+		address: '',
+		email: '',
+		phone: '',
+	};
 	protected formErrors: FormErrors = {};
+
+	getOrder(): Partial<IOrder> {
+		return this.order;
+	}
 
 	addToBasket(item: IProduct) {
 		const basketItem = {
@@ -36,6 +45,10 @@ export class Order extends Model<IOrder> {
 		}
 	}
 
+	clearBasket(): void {
+		this.basket = new Set();
+	}
+
 	getBasket(): IBasketItem[] {
 		return Array.from(this.basket);
 	}
@@ -52,19 +65,24 @@ export class Order extends Model<IOrder> {
 
 	isInBasket(item: IProduct): boolean {
 		return this.getBasketItem(item.id) ? true : false;
-		// return this.getBasket().find(
-		// 	(basketElement) => basketElement.id === item.id
-		// )
-		// 	? true
-		// 	: false;
 	}
 
-	setOrderField<K extends keyof IOrder>(field: K, value: IOrder[K]) {
+	setOrderItems(): string[] {
+		return this.getBasket().map((item) => item.id);
+	}
+
+	setOrderField<K extends keyof IOrderForm>(field: K, value: IOrder[K]) {
 		this.order[field] = value;
+
 		if (this.validateOrder()) {
-			this.emitChanges('orderForm:ready', this.order);
-		} else {
-			this.emitChanges('orderForm:error', this.formErrors);
+			this.emitChanges('orderForm:ready');
+		}
+	}
+	setContactField<K extends keyof IContactForm>(field: K, value: IOrder[K]) {
+		this.order[field] = value;
+
+		if (this.validateContacts()) {
+			this.emitChanges('contactForm:ready');
 		}
 	}
 
@@ -76,6 +94,13 @@ export class Order extends Model<IOrder> {
 		if (!this.order.address) {
 			errors.address = 'Необходимо указать адрес';
 		}
+		this.formErrors = errors;
+		this.events.emit('orderFormErrors:change', this.formErrors);
+		return Object.keys(errors).length === 0;
+	}
+
+	validateContacts() {
+		const errors: typeof this.formErrors = {};
 		if (!this.order.email) {
 			errors.email = 'Необходимо указать email';
 		}
@@ -83,7 +108,7 @@ export class Order extends Model<IOrder> {
 			errors.phone = 'Необходимо указать телефон';
 		}
 		this.formErrors = errors;
-		this.events.emit('formErrors:change', this.formErrors);
+		this.events.emit('contactFormErrors:change', this.formErrors);
 		return Object.keys(errors).length === 0;
 	}
 }

@@ -13,7 +13,6 @@ export interface ICatalog {
 export class Catalog extends Model<ICatalog> implements ICatalog {
 	protected catalog: IProduct[]; // Список всех товаров
 	protected total: number; // количество всех товаров в каталоге
-	protected preview: string | null; // ID открытого товара или null
 
 	setCatalog(items: IProduct[]) {
 		this.catalog = items;
@@ -21,7 +20,7 @@ export class Catalog extends Model<ICatalog> implements ICatalog {
 		this.emitChanges('catalog:changed');
 	}
 
-	getCatalogItems() {
+	getCatalogItems(): IProduct[] {
 		return this.catalog;
 	}
 
@@ -30,7 +29,6 @@ export class Catalog extends Model<ICatalog> implements ICatalog {
 	}
 
 	setPreview(item: IProduct) {
-		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
 	}
 }
