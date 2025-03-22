@@ -46,6 +46,7 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const orderForm = new OrderForm(cloneTemplate(orderFormtemplate), events);
 const contactForm = new ContactForm(cloneTemplate(contactFormtemplate), events);
+const success = new Success(cloneTemplate(successTemplate), events);
 
 // Оформили заказ -> выводим в мод.окно разметку для формы заказа
 events.on('basket:order', () => {
@@ -95,7 +96,6 @@ events.on('contactFormErrors:change', (errors: Partial<IContactForm>) => {
 
 // Отправлена форма заказа -> выводим в мод.окно разметку для формы контактов
 events.on('order:submit', () => {
-	orderForm.resetForm();
 	modal.render({
 		content: contactForm.render({
 			errors: [],
@@ -108,8 +108,6 @@ events.on('order:submit', () => {
 
 // Отправлена форма контактов
 events.on('contacts:submit', () => {
-	contactForm.resetForm();
-
 	api
 		.orderItems({
 			items: orderModel.setOrderItems(),
@@ -117,8 +115,11 @@ events.on('contacts:submit', () => {
 			...(orderModel.order as IOrder),
 		})
 		.then((data) => {
-			console.log(data);
-			const success = new Success(cloneTemplate(successTemplate), events);
+			orderForm.resetForm();
+			contactForm.resetForm();
+			orderModel.clearBasket();
+			page.counter = 0;
+
 			success.total = data.total;
 			modal.render({ content: success.render({}) });
 		})
@@ -129,8 +130,6 @@ events.on('contacts:submit', () => {
 
 events.on('order-success:close', () => {
 	modal.close();
-	orderModel.clearBasket();
-	page.counter = 0;
 });
 
 // поменялся каталог товаров на главной странице
